@@ -29,14 +29,15 @@ app.options("*", (req, res) => {
 app.post("/compile", (req, res) => {
   const { fileName, fileJSON } = req.body;
 
-  try {
-    complie(fileName, fileJSON);
-  } catch (err) {
-    res.status(400).json({
-      mssage: err,
-    });
-  }
+  //   try {
+  //     complie(fileName, fileJSON);
+  //   } catch (err) {
+  //     res.status(400).json({
+  //       mssage: err,
+  //     });
+  //   }
 
+  complie(fileName, fileJSON);
   res.status(200).json({
     mssage: "OK",
   });

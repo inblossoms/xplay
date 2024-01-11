@@ -13,6 +13,22 @@
       "states": {
         "count": 0
       }
+    },
+    {
+      "tag": "button",
+      "text": " + Add ",
+      "methods": {
+        "click": {
+          "addBtnEv": "console.log(count.value += 1)"
+        }
+      }
+    },
+    {
+      "tag": "button",
+      "text": " Log ",
+      "computed": {
+        "logBtnEv": "console.log(count.value)"
+      }
     }
   ]
 }
