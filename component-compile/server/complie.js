@@ -21,11 +21,12 @@ module.exports = function (filename, filejson) {
   };
   // 1. 编译 fileJSON
   // 在解析 fileJson 的时候，把数据写入到 data 中。
-  template = compileTpl(data, filejson);
+  const template = compileTpl(data, filejson);
+  const { script, handler, states } = compileScript(data);
+  console.log(script, "\n======", handler, "\n======", states);
+
   // 2. 写入文件：output / Counter
   // 3. 创建 Counter 组件：handler.js states.js index.js
-
-  console.log(template, "\n", data);
 };
 
 function compileTpl(data, json) {
@@ -99,4 +100,71 @@ function compileTpl(data, json) {
   html += `</${tag}>`;
 
   return html;
+}
+
+function compileScript(data) {
+  const { props, state, computed, methods } = data,
+    computed_deps = [];
+  let script = "";
+
+  let handler = "";
+  script += `import { ${Object.keys(methods).join(
+    ","
+  )} } from "./handler.js";\n`;
+
+  for (const m in methods) {
+    if (Object.hasOwnProperty.call(methods, m)) {
+      const fb = methods[m];
+
+      for (const s in state) {
+        if (Object.hasOwnProperty.call(state, s)) {
+          if (fb.includes(s)) {
+            handler += `import { ${s} } from "./handler.js";\n`;
+          }
+        }
+      }
+
+      handler += `export const ${m} = () => {
+			${fb};
+	  };`;
+    }
+  }
+
+  let states = "";
+  script += `import { ${Object.keys(state).join(",")} } from "./states.js";\n`;
+  for (const s in state) {
+    if (Object.hasOwnProperty.call(state, s)) {
+      const sv = state[s];
+      states += `export const ${s} = ref(${sv})\n;`;
+    }
+  }
+
+  if (Object.keys(computed).length) {
+    computed_deps.push("computed");
+  }
+  script += `import { ${computed_deps.join(",")} } from "vue";\n`;
+  script += `const props = defineProps({
+	 ${Object.keys(props).reduce((prev, curr) => {
+     if (!typesList.includes(props[curr])) {
+       throw new Error(`Unknown Type: ${pv} does not exist!`);
+     }
+     prev += `${curr}:${props[curr]},\n`;
+     return prev;
+   }, "")},
+  });\n`;
+
+  for (const c in computed) {
+    if (Object.hasOwnProperty.call(computed, c)) {
+      const fb = computed[c];
+      script += `const ${c} = computed(() => {
+		${fb};
+	  };\n`;
+    }
+  }
+
+  return {
+    script,
+    states,
+    handler,
+  };
 }
