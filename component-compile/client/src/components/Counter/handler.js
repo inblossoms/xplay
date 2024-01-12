@@ -1,9 +1,4 @@
-import { count } from "./states";
-
+import { count } from "./states.js";
 export const addBtnEv = () => {
-  count.value += 1;
-};
-
-export const logBtnEv = () => {
-  console.log(count.value);
+  console.log((count.value += 1));
 };

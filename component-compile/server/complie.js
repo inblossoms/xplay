@@ -1,4 +1,10 @@
-const { readFileSync } = require("node:fs");
+const {
+  readFileSync,
+  rmdirSync,
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+} = require("node:fs");
 const { resolve } = require("node:path");
 
 const tagsList = JSON.parse(
@@ -23,10 +29,28 @@ module.exports = function (filename, filejson) {
   // 在解析 fileJson 的时候，把数据写入到 data 中。
   const template = compileTpl(data, filejson);
   const { script, handler, states } = compileScript(data);
-  console.log(script, "\n======", handler, "\n======", states);
-
   // 2. 写入文件：output / Counter
+  const exist = existsSync(resolve(__dirname, `output/${filename}`));
+  if (exist) {
+    // 如果当前文件存在同名文件，则删除
+    rmdirSync(resolve(__dirname, `output/${filename}`), {
+      recursive: true, // 递归目录删除
+      force: true,
+    });
+  }
   // 3. 创建 Counter 组件：handler.js states.js index.js
+  mkdirSync(resolve(__dirname, `output/${filename}`));
+  writeFileSync(
+    resolve(__dirname, `output/${filename}/index.vue`),
+    createVueComponent(template, script)
+  );
+
+  writeFileSync(resolve(__dirname, `output/${filename}/handler.js`), handler);
+
+  writeFileSync(
+    resolve(__dirname, `output/${filename}/states.js`),
+    `import { ref } from "vue";\n${states}`
+  );
 };
 
 function compileTpl(data, json) {
@@ -58,6 +82,14 @@ function compileTpl(data, json) {
     }
   }
 
+  if (computed) {
+    for (const key in computed) {
+      //   html += `{{ ${key} }}`;
+      html += ` @click="${Object.keys(computed).join(",")}"`;
+
+      data.computed[key] = computed[key];
+    }
+  }
   // 闭合元素标签
   html += `>`;
 
@@ -82,14 +114,6 @@ function compileTpl(data, json) {
     }
   }
 
-  if (computed) {
-    for (const key in computed) {
-      html += `{{ ${key} }}`;
-
-      data.computed[key] = computed[key];
-    }
-  }
-
   if (children) {
     for (let i = 0, len = children.length; i < len; i++) {
       const child = children[i];
@@ -97,7 +121,7 @@ function compileTpl(data, json) {
     }
   }
 
-  html += `</${tag}>`;
+  html += `</${tag}>\n`;
 
   return html;
 }
@@ -143,14 +167,14 @@ function compileScript(data) {
     computed_deps.push("computed");
   }
   script += `import { ${computed_deps.join(",")} } from "vue";\n`;
-  script += `const props = defineProps({
+  script += `const { ${Object.keys(props).join(",")} } = defineProps({
 	 ${Object.keys(props).reduce((prev, curr) => {
      if (!typesList.includes(props[curr])) {
        throw new Error(`Unknown Type: ${pv} does not exist!`);
      }
      prev += `${curr}:${props[curr]},\n`;
      return prev;
-   }, "")},
+   }, "")}
   });\n`;
 
   for (const c in computed) {
@@ -158,7 +182,7 @@ function compileScript(data) {
       const fb = computed[c];
       script += `const ${c} = computed(() => {
 		${fb};
-	  };\n`;
+	  });\n`;
     }
   }
 
@@ -167,4 +191,8 @@ function compileScript(data) {
     states,
     handler,
   };
+}
+
+function createVueComponent(template, script) {
+  return `<script setup>\n${script}\n</script>\n<template>\n${template}\n</template>`;
 }

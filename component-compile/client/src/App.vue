@@ -4,7 +4,7 @@ import fileJson from "./assets/fileJSON.json";
 import axios from "axios";
 
 axios.post("http://localhost:3300/compile", {
-  fileName: "Counter.vue",
+  fileName: "Counter",
   fileJSON: fileJson,
 });
 </script>

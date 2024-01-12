@@ -5,8 +5,7 @@
     {
       "tag": "h3",
       "props": {
-        "title": "String",
-        "date": "String"
+        "title": "String"
       }
     },
     {
