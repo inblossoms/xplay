@@ -16,7 +16,7 @@ export default <IUser[]>[
     auth: [1, 2, 3, 4, 5, 6],
   },
   {
-    id: 1,
+    id: 3,
     username: "Ww",
     auth: [1, 2, 3, 4, 5, 6, 7],
   },
