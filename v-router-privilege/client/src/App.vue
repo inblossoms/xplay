@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import Counter from "@/components/Counter/index.vue";
+import Home from "@/views/Home.vue";
 </script>
 
 <template>
   <div>
     <h2>PRIVILAGE</h2>
     <Suspense>
-      <Counter />
+      <Home />
     </Suspense>
   </div>
 </template>

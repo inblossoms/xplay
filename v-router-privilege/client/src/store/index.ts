@@ -1,10 +1,10 @@
 import { formatRouteTree } from "@/libs";
 import { getUserRouteList } from "@/services";
-import { IRoute } from "@/typings";
+import { IRoute, IState } from "@/typings";
 import { defineStore } from "pinia";
 
 export const useStore = defineStore("U", {
-  state: () => {
+  state: (): IState => {
     return {
       uid: 3,
       hasAuth: false,

@@ -11,3 +11,9 @@ export interface IRoute {
 export interface IUID {
   uid: number;
 }
+
+export interface IState {
+  uid: number;
+  hasAuth: boolean;
+  routeTree: IRoute[];
+}
