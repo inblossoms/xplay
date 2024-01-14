@@ -1,3 +1,4 @@
 import { axios } from "./http";
+import { formatRouteTree } from "./utils";
 
-export { axios };
+export { axios, formatRouteTree };

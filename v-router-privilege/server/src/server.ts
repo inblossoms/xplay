@@ -11,7 +11,6 @@ interface IBody {
 }
 app.post("/user_router_list", (request: Request, response: Response) => {
   const { uid }: IBody = request.body;
-  console.log(uid);
 
   if (uid) {
     const userInfo: IUser | undefined = users.find((user) => user.id == uid);

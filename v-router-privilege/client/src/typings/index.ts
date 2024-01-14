@@ -5,6 +5,7 @@ export interface IRoute {
   name: string;
   title: string;
   link?: string;
+  children?: IRoute[];
 }
 
 export interface IUID {

@@ -1,24 +1,13 @@
 <script lang="ts" setup>
-import Counter from "./components/Counter/index.vue";
-import axios from "axios";
-import qs from "qs";
-
-axios
-  .post(
-    "/api/user_router_list",
-    qs.stringify({
-      uid: 1,
-    })
-  )
-  .then((res) => {
-    console.log(res);
-  });
+import Counter from "@/components/Counter/index.vue";
 </script>
 
 <template>
   <div>
     <h2>PRIVILAGE</h2>
-    <Counter />
+    <Suspense>
+      <Counter />
+    </Suspense>
   </div>
 </template>
 
