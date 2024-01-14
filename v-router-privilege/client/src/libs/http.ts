@@ -1,5 +1,4 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import qs from "qs";
 
 axios.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
@@ -17,13 +16,4 @@ axios.interceptors.response.use(
   }
 );
 
-async function HTTP_post(url: string, data: unknown) {
-  try {
-    const response = await axios.post(url, qs.stringify(data));
-    return response.data;
-  } catch (err) {
-    return Promise.reject(err);
-  }
-}
-
-export { axios, HTTP_post };
+export { axios };

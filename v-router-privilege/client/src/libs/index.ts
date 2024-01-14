@@ -1,3 +1,3 @@
-import { axios, HTTP_post } from "./http";
+import { axios } from "./http";
 
-export { axios, HTTP_post };
+export { axios };
